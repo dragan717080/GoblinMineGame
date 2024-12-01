@@ -1,9 +1,7 @@
 <div align=center>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="frontend/public/react-light.svg">
-  <source media="(prefers-color-scheme: light)" srcset="frontend/public/react-dark.svg">
-  <img alt="React">
+  <img alt="React" src="frontend/public/react-light.svg">
 </picture>
 
 # React Library
