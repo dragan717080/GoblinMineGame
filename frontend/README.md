@@ -1,7 +1,7 @@
 <div align=center>
 
 <picture>
-  <img alt="React" height="133" width="133" src="frontend/public/react-dark.png">
+  <img alt="React" height="133" width="133" src="frontend/public/react-light.png">
 </picture>
 
 # React Library
