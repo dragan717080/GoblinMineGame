@@ -1,0 +1,245 @@
+.frame-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  background-size: 140%!important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+}
+
+@media (min-width: 992px) {
+  .body {
+    background-size: 148vh!important;
+    background-repeat: no-repeat !important;
+    background-position: 50% -31vh!important;
+  }
+}
+
+/* Borders */
+.outer-border {
+  border: 2px solid var(--primary);
+  height: 99%;
+  width: 98%;
+  padding: 6px;
+  margin: 0 auto;
+}
+
+.mid-border {
+  border: 6px solid var(--primary);
+  height: 100%;
+  width: 100%;
+  padding: 6px;
+  margin: auto;
+}
+
+.inner-border {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Social Row */
+.social-row {
+  display: flex;
+  flex-direction: column;
+  right: 0;
+  position: absolute;
+}
+
+@media (min-width: 768px) {
+  .social-row {
+    position: relative;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+
+.social-row a {
+  width: 2em;
+  height: 2em;
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding: 1em 0;
+  z-index: 99;
+  margin-bottom: 1em;
+  margin-right: 1em;
+}
+
+@media (min-width: 768px) {
+  .social-row a {
+    width: 2.5em;
+    height: 2.5em;
+    padding: 1em 0;
+    margin-bottom: 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  .social-row a {
+    width: 3em;
+    height: 3em;
+    padding: 0;
+  }
+}
+
+/* Decorations */
+.corner-decoration {
+  position: absolute;
+  width: 3em;
+  margin: -3px;
+}
+
+@media (min-width: 768px) {
+  .corner-decoration {
+    width: 3.5em;
+    margin: -4px;
+  }
+}
+
+@media (min-width: 992px) {
+  .corner-decoration {
+    width: 4em;
+    margin: -5px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .corner-decoration {
+    width: 5em;
+    margin: -6px;
+  }
+}
+
+.corner-decoration.corner-left-top {
+  left: 0;
+  top: 0;
+}
+
+.corner-decoration.corner-right-top {
+  top: 0;
+  right: 0;
+  -webkit-transform: scaleX(-1);
+  transform: scaleX(-1);
+}
+
+.corner-decoration.corner-right-bottom {
+  right: 0;
+  bottom: 0;
+  -webkit-transform: scale(-1);
+  transform: scale(-1);
+}
+
+.corner-decoration.corner-left-bottom {
+  left: 0;
+  bottom: 0;
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+}
+
+
+.vertical-decoration {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 11em;
+}
+
+
+@media (min-width: 768px) {
+  .vertical-decoration {
+  width: 16em;
+  }
+}
+
+
+@media (min-width: 992px) {
+  .vertical-decoration {
+  width: 20em;
+  }
+}
+
+@media (min-width: 1200px) {
+  .vertical-decoration {
+  width: 27em;
+  }
+}
+
+.vertical-decoration.top {
+  top: 0;
+}
+
+.vertical-decoration.bottom {
+  bottom: 0;
+  -webkit-transform: scaleY(-1);
+  transform: scaleY(-1);
+}
+
+.card-container{
+  position: relative;
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+}
+
+.card{
+  width:100%;
+  height:100%;
+  -webkit-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+  -webkit-transition: all .5s linear;
+  transition: all .5s linear;
+  border-radius:10px;
+}
+
+.face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius:10px;
+}
+
+.back {
+  overflow:hidden;
+  z-index:-1;
+  -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+  box-sizing: border-box;
+  &:before{
+    content: "";
+	  position: absolute;
+	  width: 100%;
+	  height: 100%;
+	  z-index: -1;
+	  -webkit-transform: rotateY(180deg);
+	  -moz-transform: rotateY(180deg);
+	  -ms-transform: rotateY(180deg);
+	  -o-transform: rotateY(180deg);
+	  transform: rotateY(180deg);
+  }
+}
+
+.front, .back{
+  transition: all .5s linear;
+}
+
+.front{
+  z-index:1;
+  box-shadow: 5px 5px 5px var(--bg-dark);
+}
+
+.back{
+  box-shadow: 0 0 0 var(--bg-dark);
+}
+
+.flipped, .hovercard:hover{
+  -webkit-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+  .front{
+    box-shadow:0 0 0 var(--bg-dark);
+  }
+  .back{
+    box-shadow: 5px 5px 5px var(--bg-dark);
+  }
+}
