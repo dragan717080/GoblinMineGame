@@ -1,8 +1,8 @@
 <div align=center>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="public/react-light.svg">
-  <source media="(prefers-color-scheme: light)" srcset="public/react-dark.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="frontend/public/react-light.svg">
+  <source media="(prefers-color-scheme: light)" srcset="frontend/public/react-dark.svg">
   <img alt="React">
 </picture>
 
