@@ -11,7 +11,7 @@
     <img alt="Laravel" width="133" height="133">
 </picture>
 
-# <a name="no-link"></a>Laravel Library API
+# <a name="no-link"></a>React Laravel Goblin Mine Game
 
 ### Library app built with React and Laravel
 
