@@ -1,12 +1,14 @@
 <div align=center>
 
 <picture>
-  <img alt="React" height="133" width="133" src="frontend/public/react-light.png">
+  <source media="(prefers-color-scheme: dark)" srcset="public/react-light.svg">
+  <source media="(prefers-color-scheme: light)" srcset="public/react-dark.svg">
+  <img height="133" width="133" alt="React">
 </picture>
 
-# React Library
+# React Goblin Mine Game
 
-### React Library App with TypeScript, Vite, Tailwind CSS, ESLint, Prettier, and Husky.
+### Goblin Mine Game App with TypeScript, Vite, Tailwind CSS, ESLint, Prettier, and Husky.
 
 </div>
 
