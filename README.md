@@ -13,7 +13,7 @@
 
 # <a name="no-link"></a>React Laravel Goblin Mine Game
 
-### Library app built with React and Laravel
+### Goblin Mine Game app built with React and Laravel
 
 </div>
 &nbsp;&nbsp;&nbsp;&nbsp;
