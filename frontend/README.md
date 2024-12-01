@@ -1,7 +1,7 @@
 <div align=center>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="public/react-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="public/react-light.webp">
   <source media="(prefers-color-scheme: light)" srcset="public/react-dark.svg">
   <img height="133" width="133" alt="React">
 </picture>

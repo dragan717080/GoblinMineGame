@@ -3,7 +3,7 @@
 ![stars] ![repo-size]
 
 <picture>
-  <img src="frontend/public/react-light.png" height="133" width="133" alt="React">
+  <img src="frontend/public/react-light.webp" height="133" width="133" alt="React">
 </picture>
 
 <picture>
