@@ -4,8 +4,8 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="frontend/public/react-light.svg">
-  <source media="(prefers-color-scheme: light)" srcset="frontend/public/react-dark.svg">
-  <img src="frontend/public/react-dark.svg" alt="React Logo" width="133" height="133">
+  <source media="(prefers-color-scheme: light)" srcset="frontend/public/react-dark.png">
+  <img src="frontend/public/react-dark.png" alt="React Logo" width="133" height="133">
 </picture>
 
 <picture>
