@@ -4,9 +4,9 @@ export default interface CashedOutModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   hasCloseBtn?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
   startGame: () => void;
   multiplier: number;
   payoff: number;
-  isBombPage: boolean;
+  isBombPage?: boolean;
 };

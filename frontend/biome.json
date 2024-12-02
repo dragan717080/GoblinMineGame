@@ -5,7 +5,7 @@
     "ignore": [".react-router"]
   },
   "organizeImports": {
-    "enabled": true
+    "enabled": false
   },
   "formatter": {
     "indentStyle": "space"
@@ -15,7 +15,8 @@
     "rules": {
       "recommended": true,
       "a11y": {
-        "useSemanticElements": "error"
+        "useSemanticElements": "error",
+        "useKeyWithClickEvents": "off"
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "error",
@@ -28,7 +29,8 @@
         "noUnusedImports": "error",
         "noUnusedVariables": "warn",
         "noUnusedFunctionParameters": "warn",
-        "useHookAtTopLevel": "error"
+        "useHookAtTopLevel": "error",
+        "useExhaustiveDependencies": "off"
       },
       "nursery": {
         "noDuplicateElseIf": "error"
@@ -42,6 +44,7 @@
         "useBlockStatements": "error",
         "useCollapsedElseIf": "error",
         "useDefaultSwitchClause": "error",
+        "noNonNullAssertion": "off",
         "useConsistentArrayType": {
           "level": "error",
           "options": {

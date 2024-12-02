@@ -11,7 +11,7 @@ const LostModal = ({ isOpen, setIsOpen, startGame, multiplier, isBombPage = fals
         ${!isBombPage ? 'absolute w-full bottom-0' : ''}
       `}
       >
-        <div className={`text-white ${isBombPage ? 'wrapper mt-[10%]' : 'pt-40'}`}>
+        <div className={`wrapper text-white md:mt-[5%] ${isBombPage ? 'mt-[10%]' : 'pt-40'}`}>
           <div className="modal-content row flex-col bg-coffee rounded-[1.25rem]">
             <div className="row flex-col">
               <div className="mt-6 mb-4 row">

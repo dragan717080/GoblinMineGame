@@ -1,9 +1,9 @@
-import type { MoreLessGameHistory } from "@/../interfaces";
+import type { MoreLessHistoryModalProps } from "@/../interfaces";
 import '@/lib/styles/modal.css';
 
-const HistoryModal = ({ isOpen, setIsOpen, games }: MoreLessGameHistory) => {
+const HistoryModal = ({ isOpen, games }: MoreLessHistoryModalProps) => {
   console.log('Games:', games);
-  const OPTIONS = { even: "ЧЁТ", lt: "<", eq: "=", gt: ">", odd: "НЕЧЁТ" };
+  const OPTIONS: { [key: string]: string } = { even: "ЧЁТ", lt: "<", eq: "=", gt: ">", odd: "НЕЧЁТ" };
 
   return (
     <>

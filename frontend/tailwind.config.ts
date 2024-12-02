@@ -10,7 +10,6 @@ export default {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     colors: {
-      limegreen: '#CBFC48',
       primary: '#FF9519',
       secondary: '#FF9B00',
       beige: "#D2BDAB",
@@ -20,6 +19,7 @@ export default {
       peach: "#FFDAB9",
       darkpeach: "#FFBC80",
       limegreen: "#1DB954",
+      limegreenalt: '#CBFC48',
       dark: "#3A3D3E",
       transparent: 'transparent',
       current: 'currentColor',

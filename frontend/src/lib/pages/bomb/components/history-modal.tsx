@@ -1,6 +1,6 @@
 import type { HistoryModalProps } from "@/../interfaces";
 
-const HistoryModal = ({ isOpen, setIsOpen, games }: HistoryModalProps) => {
+const HistoryModal = ({ isOpen, games }: HistoryModalProps) => {
   console.log('Games:', games);
   return (
     <>

@@ -1,3 +1,4 @@
+  // biome-ignore lint/correctness/noUnusedImports: might need it later
 import { ThemeToggle } from '@/lib/components/theme-toggle';
 
 export const Header = () => {

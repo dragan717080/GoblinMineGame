@@ -3,5 +3,5 @@ export default interface LostModalProps {
   setIsOpen: (newIsOpen: boolean) => void;
   startGame: () => void;
   multiplier: number;
-  ?isBombPage: boolean;
+  isBombPage?: boolean;
 };

@@ -1,7 +1,7 @@
 export type GameOption = "odd" | "even" | "lt" | "gt" | "eq";
 
 export default interface GameSelectionProps {
-  onClick: (selectedOption: GameOption) => void;
+  onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   canSelectOption: boolean;
   text: string;
   multiplier: number;

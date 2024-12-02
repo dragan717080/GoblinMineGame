@@ -1,6 +1,6 @@
-import MoreLessGameHistory from './GameHistory';
+import MoreLessGameHistory from './MoreLessGameHistory';
 import ModalProps from './ModalProps';
 
 export default interface MoreLessHistoryModalProps extends ModalProps {
-  games: MoreLessGameHistory[];
+  games: Array<MoreLessGameHistory>;
 };

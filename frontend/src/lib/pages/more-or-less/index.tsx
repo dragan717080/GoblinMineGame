@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import { SteamPunkFrame, Wheel } from '@/assets/images'
-import { OptionButton } from "@/lib/layout/components/option-button";
 import { GameSelection } from "./components/game-selection";
 import { StakeSelection } from "@/lib/layout/components/stake-selection";
 import CustomButton from "@/lib/layout/components/custom-button";
@@ -10,38 +9,38 @@ import { LostModal } from "./components/lost-modal";
 import type { MoreLessGameHistory, GameOption } from "@/../interfaces";
 
 const MoreOrLessPage = () => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [stake, setStake] = useState<number>(10_000);
+  // biome-ignore lint/correctness/noUnusedVariables: might use later
   const [option, setOption] = useState<GameOption | null>(null);
   // Number that is chosen at start of game
   const [knownNumber, setKnownNumber] = useState<number>(0);
   const [numberToGuess, setNumberToGuess] = useState<number>(0);
   const [multiplier, setMultiplier] = useState<number>(1);
-  const [gamesHistory, setGamesHistory] = useState<MoreLessGameHistory[]>([] as MoreLessGameHistory[]);
-  const [lost, setLost] = useState<boolean>(false);
+  const [gamesHistory, setGamesHistory] = useState<Array<MoreLessGameHistory>>([] as Array<MoreLessGameHistory>);
 
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState<boolean>(false);
   const [isCashedOutModalOpen, setIsCashedOutModalOpen] = useState<boolean>(false);
   const [isLostModalOpen, setIsLostModalOpen] = useState<boolean>(false);
 
   const numberToGuessRef = useRef<HTMLSpanElement | null>(null);
-  const numberToGuessContainerRef = useRef<HTMLSpanElement | null>(null);
+  const numberToGuessContainerRef = useRef<HTMLDivElement | null>(null);
   const wheelRef = useRef<HTMLImageElement | null>(null);
   const wheelCenterRef = useRef<HTMLDivElement | null>(null);
   // Only allow selecting option when known number has loaded
   const [canSelectOption, setCanSelectOption] = useState<boolean>(false);
 
   const OPTIONS = { even: "ЧЁТ", lt: "<", eq: "=", gt: ">", odd: "НЕЧЁТ" };
+  // @ts-ignore
   const moreOrLessUrl = `${import.meta.env.VITE_API_BASE_URL}/more-or-less`;
 
   const startGame = (selectedOption: GameOption) => {
     // Disallow selecting new option until later on, when result of game is known
     setCanSelectOption(false);
-    numberToGuessContainerRef!.current.classList.remove('border-peach');
+    numberToGuessContainerRef.current!.classList.remove('border-peach');
 
     console.log('option:', selectedOption);
 
-    makeElementCounter(numberToGuess, numberToGuessRef.current, false, selectedOption);
+    makeElementCounter(numberToGuess, numberToGuessRef.current!, false, selectedOption);
 
     console.log('To evaluate game');
   }
@@ -63,7 +62,6 @@ const MoreOrLessPage = () => {
     setKnownNumber(Math.floor(Math.random() * (98 - 2 + 1)) + 2);
     // 1 - 99
     setNumberToGuess(Math.floor(Math.random() * 99) + 1);
-    setLost(false);
     numberToGuessRef.current!.classList.add("opacity-25");
     numberToGuessRef.current!.innerText = "?";
     wheelCenterRef.current!.classList.remove("block");
@@ -80,7 +78,7 @@ const MoreOrLessPage = () => {
    * Send game stats to the API.
    */
   const sendGameStats = async (selectedOption: GameOption, won: boolean, multiplier: number) => {
-    const response = await fetch(moreOrLessUrl, {
+    await fetch(moreOrLessUrl, {
       method: 'POST',
       body: JSON.stringify({
         known: knownNumber,
@@ -88,13 +86,13 @@ const MoreOrLessPage = () => {
         guessed: numberToGuess,
         stake,
         multiplier,
-        payoff: (stake * multiplier).toFixed(2)
+        payoff: won ? (stake * multiplier).toFixed(2) : 0
       })
     });
   }
 
   const evaluateGame = async (selectedOption: GameOption) => {
-    let won;
+    let won = false;
 
     switch (selectedOption) {
       case "even":
@@ -120,7 +118,8 @@ const MoreOrLessPage = () => {
     // Get multiplier for selected option
     const selectedOptionIndex = Object.keys(OPTIONS).indexOf(selectedOption);
     // `slice(1)` since it starts with `x`
-    const newMultiplier = document.getElementsByClassName('selection-multiplier')[selectedOptionIndex].innerText.slice(1);
+    const selectionMultiplierElements = document.getElementsByClassName('selection-multiplier') as unknown as Array<HTMLDivElement>;
+    const newMultiplier = selectionMultiplierElements[selectedOptionIndex].innerText.slice(1) as unknown as number;
     setMultiplier(newMultiplier);
     sendGameStats(selectedOption, won, newMultiplier);
 
@@ -133,7 +132,6 @@ const MoreOrLessPage = () => {
     } else {
       numberToGuessContainerRef.current!.classList.add('border-red-500');
       wheelCenterRef.current!.classList.add('bg-red-500');
-      setLost(true);
       await wait(700);
       console.log('opening lost modal')
       setIsLostModalOpen(true);
@@ -161,7 +159,7 @@ const MoreOrLessPage = () => {
    */
   const setMultipliers = () => {
     console.log('SETTING MULTIPLIERS');
-    const optionSelectionElements = document.getElementsByClassName('selection-multiplier');
+    const optionSelectionElements = document.getElementsByClassName('selection-multiplier') as unknown as Array<HTMLDivElement>;
     const [ltElement, gtElement] = [optionSelectionElements[1], optionSelectionElements[3]];
     const probLess = (knownNumber - 1) / 99;
     // If odds is at `1.05` or less, don't reduce odds
@@ -171,7 +169,6 @@ const MoreOrLessPage = () => {
 
     // Calculate probability for greater than knownNumber
     const probGreater = (99 - knownNumber) / 99;
-    const k = 1 / probGreater - 0.05;
     // Adding `+0.01` to avoid `1.00` odds
     newProb = (1 / probGreater - 0.05) >= 1 ? (1 / probGreater - 0.05) + 0.01 : 1 / probGreater;
     const oddsGreater = newProb.toFixed(2); // With bookie -0.05
@@ -194,23 +191,25 @@ const MoreOrLessPage = () => {
    * respective UI `innerText`. Defaults to true.
    * @param {GameOption} [selectedOption]
    */
-  const makeElementCounter = (num: number, element: HTMLSpanElement, isKnown: boolean = true, selectedOption) => {
+  // biome-ignore lint/style/useDefaultParameterLast: both last two params are opt
+  const makeElementCounter = (num: number, element: HTMLSpanElement, isKnown: boolean | undefined = true, selectedOption: GameOption | undefined) => {
     let k = 1;
     // Start spin for guessing number
     if (!isKnown) {
-      changeWheelCenterStyle(selectedOption);
+      changeWheelCenterStyle(selectedOption as GameOption);
 
       // Visual effect on guessed number to appear fully brighted
       element.classList.remove("opacity-25");
     }
 
+    // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: strange complexity warning
     const incrementCounter = () => {
       // Slower speed when closer to target
       const diff = num - k;
       const ms = diff < 3 ? 310 : diff < 7 ? 100 : diff < 15 ? 15 : 7;
 
       if (k < num) {
-        element.innerText = ++k;
+        element.innerText = ++k as unknown as string;
 
         // Call `incrementCounter` again after a delay
         setTimeout(incrementCounter, ms);
@@ -225,7 +224,7 @@ const MoreOrLessPage = () => {
           // Finished picking number
           // Since `setTimeout` is asynchronous, must be called inside of this function,
           // and after `incrementCounter` loops
-          evaluateGame(selectedOption);
+          evaluateGame(selectedOption!);
           console.log('wheel center:', wheelCenterRef.current)
           //wheelCenterRef.current!.classList.remove("block");
           //wheelCenterRef.current!.classList.add("hidden");
@@ -260,7 +259,7 @@ const MoreOrLessPage = () => {
   /**
    * Create counter for the known number (from 1 to its value).
    */
-  const makeKnownNumberCounter = useCallback(async (node) => {
+  const makeKnownNumberCounter = useCallback(async (node: HTMLSpanElement) => {
 
     // Wait for `useEffect` to update `knownNumber`, also, although refs are updated before `useEffect` which calls this function,
     // still it's good to be sure
@@ -268,10 +267,11 @@ const MoreOrLessPage = () => {
       await wait(5);
     }
 
+    // @ts-ignore TS error, func has proper params
     makeElementCounter(knownNumber, node);
   }, [knownNumber]);
 
-  const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   useEffect(() => {
     setKnownNumber(Math.floor(Math.random() * (98 - 2 + 1)) + 2);
@@ -302,13 +302,24 @@ const MoreOrLessPage = () => {
  * Close modal when wherever is clicked.
  */
   useEffect(() => {
-    if (typeof (window) !== 'undefined') {
-      window.addEventListener('click', (e: MouseEvent) => {
+    if (typeof window !== 'undefined') {
+      const handleClick = (e: MouseEvent<Element, MouseEvent>) => {
         // Don't close same time as opened (`CustomButton` clicked)
+        // Can ignore rather than type check if it is button, for performance
+        // @ts-ignore
         if (!(Array.from(e.target.classList).includes('focus-visible:outline-2'))) {
           setIsHistoryModalOpen(false);
         }
-      });
+      };
+  
+      // @ts-ignore
+      window.addEventListener('click', handleClick);
+  
+      // Clean up the event listener on component unmount
+      return () => {
+        // @ts-ignore
+        window.removeEventListener('click', handleClick);
+      };
     }
   }, []);
 
@@ -367,7 +378,7 @@ const MoreOrLessPage = () => {
         </div>
         <CashedOutModal isOpen={isCashedOutModalOpen} setIsOpen={setIsCashedOutModalOpen} startGame={resetGame} multiplier={multiplier} payoff={Math.round(stake * multiplier)} isBombPage={false} />
         <LostModal isOpen={isLostModalOpen} setIsOpen={setIsLostModalOpen} startGame={resetGame} multiplier={multiplier} isBombPage={false} />
-        <HistoryModal isOpen={isHistoryModalOpen} setIsOpen={setIsHistoryModalOpen} games={gamesHistory} />
+        <HistoryModal isOpen={isHistoryModalOpen} games={gamesHistory} />
       </section>
     </>
   )

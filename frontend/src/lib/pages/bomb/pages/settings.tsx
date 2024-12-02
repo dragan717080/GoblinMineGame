@@ -1,20 +1,9 @@
-import { useState } from "react";
 import { OptionButton } from "@/lib/layout/components/option-button";
-import { BananaIcon, BombIcon } from "@/assets/images";
 import { StakeSelection } from "@/lib/layout/components/stake-selection";
-
-interface SettingsProps {
-  setIsSettingGame: (boolean) => void;
-  bombsAmount: number;
-  setBombsAmount: (number) => void;
-  stake: number;
-  setStake: (number) => void;
-}
+import { BananaIcon, BombIcon } from "@/assets/images";
+import type { SettingsProps } from "@/../interfaces";
 
 export const Settings = ({ setIsSettingGame, bombsAmount, setBombsAmount, stake, setStake }: SettingsProps) => {
-  // How many hits, out of `25 - bombsAmount`
-  const [hits, setHits] = useState<number>(0);
-
   const startGame = () => {
     setIsSettingGame(false);
   }
@@ -24,7 +13,7 @@ export const Settings = ({ setIsSettingGame, bombsAmount, setBombsAmount, stake,
    */
   const increaseStake = () => {
     if (stake < 1_000_000) {
-      setStake((prevStake: number) => prevStake + 10_000)
+      setStake((prevStake) => prevStake + 10_000)
     }
   }
 

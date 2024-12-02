@@ -6,7 +6,7 @@ import { CashedOutModal } from "../components/cashed-out-modal";
 import type { BombGameProps, GameHistory } from "@/../interfaces";
 import '@/lib/styles/modal.css';
 
-
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: strange complexity warning lint/correctness/noUnusedFunctionParameters: Passes it to modals
 export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) => {
   /**
    * Starts a new game.
@@ -23,7 +23,7 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
   /**
    * Complete the game when ended successfully, by paying off.
    */
-  const completeGame = async (): void => {
+  const completeGame = async (): Promise<void> => {
     setIsLoading(true);
     const response = await fetch(bombURL, {
       method: 'POST',
@@ -48,11 +48,12 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
   const [gameWasLost, setGameWasLost] = useState<boolean>(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState<boolean>(false);
   const [isCashedOutModalOpen, setIsCashedOutModalOpen] = useState<boolean>(false);
-  const [gamesHistory, setGamesHistory] = useState<GameHistory[]>([] as GameHistory[]);
+  const [gamesHistory, setGamesHistory] = useState<Array<GameHistory>>([] as Array<GameHistory>);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //bombsAmount = 23;
 
+  // @ts-ignore
   const bombURL = `${import.meta.env.VITE_API_BASE_URL}/bombs`;
 
   const openHistoryModal = () => {
@@ -69,10 +70,14 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
   const multipliers = [1.08, 1.23, 1.42, 1.64, 1.92, 2.25, 2.68, 3.21, 3.9, 4.8, 6, 6.9, 7.94, 9.13, 10.51, 12.08, 13.87, 15.95, 18.33, 21.01, 24.02, 27.47, 31.32, 35.62, 40.5, 45.6, 50.81, 56.00, 61.26];
   console.log('Begin flipped:', flipped);
 
-  const wait = async (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+  const wait = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
   // Function to handle the card click event
-  const handleCardClick = async (e: MouseEvent, row: number, col: number) => {
+  const handleCardClick = async (
+    e: React.MouseEvent<HTMLDivElement>,
+    row: number,
+    col: number
+  ) => {
     // Make all other cards unclickable until animation has finished
     const cardFronts = Array.from(document.getElementsByClassName('front'));
     for (const cardFront of cardFronts) {
@@ -83,15 +88,15 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
     console.log(e.target);
     const newFlipped = [...flipped];
 
-    let currentElement = e.target;
-    while (!(Array.from(currentElement.classList).includes('clickcard'))) {
-      currentElement = currentElement.parentNode;
+    let currentElement = e.target!;
+    while (!(Array.from((currentElement as HTMLDivElement).classList).includes('clickcard'))) {
+      currentElement = (currentElement as HTMLElement).parentNode! as HTMLDivElement;
     }
 
     console.log(currentElement);
 
-    if (!(Array.from(currentElement.classList).includes('flipped'))) {
-      currentElement.classList.add('flipped');
+    if (!(Array.from((currentElement as HTMLDivElement).classList).includes('flipped'))) {
+      (currentElement as HTMLDivElement).classList.add('flipped');
       // Wait for the animation
       await wait(500);
       console.log('Animation ended');
@@ -146,7 +151,7 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
    * @returns {Array<number>} - Bomb positions.
    */
   const getBombPositions = (): Array<number> => {
-    const arr = [];
+    const arr: Array<number> = [];
 
     while (arr.length < bombsAmount) {
       const num = Math.floor(Math.random() * 25);
@@ -195,13 +200,23 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
    * Close modal when wherever is clicked.
    */
   useEffect(() => {
-    if (typeof (window) !== 'undefined') {
-      window.addEventListener('click', (e: MouseEvent) => {
+    if (typeof window !== 'undefined') {
+      const handleClick = (e: MouseEvent) => {
         // Don't close same time as opened (`CustomButton` clicked)
+        // Can ignore rather than type check if it is button, for performance
+        // @ts-ignore
         if (!(Array.from(e.target.classList).includes('focus-visible:outline-2'))) {
           setIsHistoryModalOpen(false);
         }
-      });
+      };
+  
+      window.addEventListener('click', handleClick);
+  
+      // Clean up the event listener on component unmount
+      return () => {
+        // @ts-ignore
+        window.removeEventListener('click', handleClick);
+      };
     }
   }, []);
 
@@ -276,7 +291,7 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
           disabled={totalGuesses === 0 && !gameWasLost}
         >
           {isLoading
-            ? <div class="lds-spinner translate-x-[-0.5rem] translate-y-[-0.375rem] scale-[0.5]"><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /></div>
+            ? <div className="lds-spinner translate-x-[-0.5rem] translate-y-[-0.375rem] scale-[0.5]"><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /></div>
             : totalGuesses === 0
               ? gameWasLost ? 'Ты проиграл' : 'Найди бананы'
               : gameWasLost

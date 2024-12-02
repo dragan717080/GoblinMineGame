@@ -10,7 +10,7 @@ const CashedOutModal = ({ isOpen, setIsOpen, startGame, multiplier, payoff, isBo
         ${!isBombPage ? 'absolute w-full bottom-0' : ''}
       `}
     >
-      <div className={`text-white ${isBombPage ? 'wrapper mt-[10%]' : 'pt-40'}`}>
+      <div className={`wrapper text-white md:mt-[5%] ${isBombPage ? 'mt-[10%]' : 'pt-40'}`}>
         <div className="modal-content row flex-col bg-coffee rounded-[1.25rem]">
           <div className="">
             <div className="my-6 row">

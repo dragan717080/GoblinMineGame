@@ -1,7 +1,5 @@
-'use client'
-
 import type { FC } from 'react';
-import type CustomButtonProps from '@/app/interfaces/props/CustomButtonProps';
+import type { CustomButtonProps } from '@/../interfaces';
 
 const CustomButton: FC<CustomButtonProps> = (props) => {
 

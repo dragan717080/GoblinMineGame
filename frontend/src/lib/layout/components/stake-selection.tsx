@@ -1,5 +1,5 @@
 import { OptionButton } from "./option-button";
-import type { StakeProps } from "@/../interfaces";
+import type { StakeSelectionProps } from "@/../interfaces";
 
 /**
  * Row with options for settings stake amount.
@@ -9,7 +9,7 @@ import type { StakeProps } from "@/../interfaces";
  * @param {() => void} increaseStake
  * @param {(newStake: number) => void} setStake
  */
-export const StakeSelection = ({ stake, decreaseStake, increaseStake, setStake }: StakeProps) => {
+export const StakeSelection = ({ stake, decreaseStake, increaseStake, setStake }: StakeSelectionProps) => {
   return (
       <div className="row-h">
         <OptionButton text="Min" onClick={() => setStake(10_000)} />

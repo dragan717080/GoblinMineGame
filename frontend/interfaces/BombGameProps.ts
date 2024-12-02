@@ -1,5 +1,5 @@
 export default interface GameProps {
-  setIsSettingGame: (boolean) => void;
+  setIsSettingGame?: (newIsSettingGame: boolean) => void;
   stake: number;
   bombsAmount: number;
 }
