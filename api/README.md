@@ -165,3 +165,7 @@ Returns
     "message": "Deleted bomb with id 9d9f867b-32ff-4d0c-aed9-f62463e25063"
 }
 ```
+
+# API hosted on Vercel
+
+https://goblin-mine-game-api.vercel.app/
