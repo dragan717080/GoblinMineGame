@@ -4,6 +4,7 @@ export type { default as OptionButtonProps } from './OptionButtonProps';
 export type { default as CustomButtonProps } from './CustomButtonProps';
 export type { default as ModalProps } from './ModalProps';
 export type { default as GameHistory } from './GameHistory';
+export type { default as MoreLessGameHistory } from './MoreLessGameHistory';
 export type { default as HistoryModalProps } from './HistoryModalProps';
 export type { default as BombGameProps } from './BombGameProps';
 export type { default as CashedOutModalProps } from './CashedOutModalProps';

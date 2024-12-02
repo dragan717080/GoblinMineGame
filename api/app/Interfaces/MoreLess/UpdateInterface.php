@@ -8,7 +8,10 @@ interface UpdateInterface
 {
     public function update(
         string $id,
-        ?int $bombs,
+        ?int $known,
+        ?string $option,
+        ?int $guessed,
+        ?int $stake,
         ?float $multiplier,
         ?int $payoff,
     );

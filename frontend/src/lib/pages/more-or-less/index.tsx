@@ -5,17 +5,19 @@ import { GameSelection } from "./components/game-selection";
 import { StakeSelection } from "@/lib/layout/components/stake-selection";
 import CustomButton from "@/lib/layout/components/custom-button";
 import { CashedOutModal } from "../bomb/components/cashed-out-modal";
+import { HistoryModal } from "./components/history-modal";
 import { LostModal } from "./components/lost-modal";
-import type { GameOption } from "@/../interfaces";
+import type { MoreLessGameHistory, GameOption } from "@/../interfaces";
 
 const MoreOrLessPage = () => {
-  const [isSettingGame, setIsSettingGame] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [stake, setStake] = useState<number>(10_000);
   const [option, setOption] = useState<GameOption | null>(null);
   // Number that is chosen at start of game
   const [knownNumber, setKnownNumber] = useState<number>(0);
   const [numberToGuess, setNumberToGuess] = useState<number>(0);
   const [multiplier, setMultiplier] = useState<number>(1);
+  const [gamesHistory, setGamesHistory] = useState<MoreLessGameHistory[]>([] as MoreLessGameHistory[]);
   const [lost, setLost] = useState<boolean>(false);
 
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState<boolean>(false);
@@ -30,6 +32,7 @@ const MoreOrLessPage = () => {
   const [canSelectOption, setCanSelectOption] = useState<boolean>(false);
 
   const OPTIONS = { even: "ЧЁТ", lt: "<", eq: "=", gt: ">", odd: "НЕЧЁТ" };
+  const moreOrLessUrl = `${import.meta.env.VITE_API_BASE_URL}/more-or-less`;
 
   const startGame = (selectedOption: GameOption) => {
     // Disallow selecting new option until later on, when result of game is known
@@ -47,14 +50,19 @@ const MoreOrLessPage = () => {
     setIsCashedOutModalOpen(true);
   }
 
+  const openHistoryModal = () => {
+    console.log('opening history modal')
+    setIsHistoryModalOpen(true);
+  }
+
   /**
    * This function will also be passed to `CashedOutModal`.
    */
   const resetGame = () => {
-    // 1 - 99
-    setKnownNumber(Math.floor(Math.random() * 99) + 1);
     // 2 - 98, to allow for `lt` and `gt` options
-    setNumberToGuess(Math.floor(Math.random() * (98 - 2 + 1)) + 2);
+    setKnownNumber(Math.floor(Math.random() * (98 - 2 + 1)) + 2);
+    // 1 - 99
+    setNumberToGuess(Math.floor(Math.random() * 99) + 1);
     setLost(false);
     numberToGuessRef.current!.classList.add("opacity-25");
     numberToGuessRef.current!.innerText = "?";
@@ -66,6 +74,23 @@ const MoreOrLessPage = () => {
     numberToGuessContainerRef.current!.classList.remove("border-red-500");
     numberToGuessContainerRef.current!.classList.remove("border-limegreen");
     numberToGuessContainerRef.current!.classList.add("border-peach");
+  }
+
+  /**
+   * Send game stats to the API.
+   */
+  const sendGameStats = async (selectedOption: GameOption, won: boolean, multiplier: number) => {
+    const response = await fetch(moreOrLessUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        known: knownNumber,
+        option: selectedOption,
+        guessed: numberToGuess,
+        stake,
+        multiplier,
+        payoff: (stake * multiplier).toFixed(2)
+      })
+    });
   }
 
   const evaluateGame = async (selectedOption: GameOption) => {
@@ -97,6 +122,7 @@ const MoreOrLessPage = () => {
     // `slice(1)` since it starts with `x`
     const newMultiplier = document.getElementsByClassName('selection-multiplier')[selectedOptionIndex].innerText.slice(1);
     setMultiplier(newMultiplier);
+    sendGameStats(selectedOption, won, newMultiplier);
 
     if (won) {
       numberToGuessContainerRef.current!.classList.add('border-limegreen');
@@ -139,12 +165,15 @@ const MoreOrLessPage = () => {
     const [ltElement, gtElement] = [optionSelectionElements[1], optionSelectionElements[3]];
     const probLess = (knownNumber - 1) / 99;
     // If odds is at `1.05` or less, don't reduce odds
-    let newProb = (1 / probLess - 0.05) >= 1 ? (1 / probLess - 0.05) : 1 / probLess;
+    // Adding `+0.01` to avoid `1.00` odds
+    let newProb = (1 / probLess - 0.05) >= 1 ? (1 / probLess - 0.05) + 0.01 : 1 / probLess;
     const oddsLess = newProb.toFixed(2); // With bookie -0.05
 
     // Calculate probability for greater than knownNumber
     const probGreater = (99 - knownNumber) / 99;
-    newProb = (1 / probGreater - 0.05) >= 1 ? (1 / probGreater - 0.05) : 1 / probGreater;
+    const k = 1 / probGreater - 0.05;
+    // Adding `+0.01` to avoid `1.00` odds
+    newProb = (1 / probGreater - 0.05) >= 1 ? (1 / probGreater - 0.05) + 0.01 : 1 / probGreater;
     const oddsGreater = newProb.toFixed(2); // With bookie -0.05
 
     console.log(`Odds for number less than ${knownNumber}: ${oddsLess}`);
@@ -245,14 +274,43 @@ const MoreOrLessPage = () => {
   const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
   useEffect(() => {
-    setKnownNumber(3);
-    //setKnownNumber(Math.floor(Math.random() * 99) + 1);
-    setNumberToGuess(Math.floor(Math.random() * (98 - 2 + 1)) + 2);
+    setKnownNumber(Math.floor(Math.random() * (98 - 2 + 1)) + 2);
+    setNumberToGuess(Math.floor(Math.random() * 99) + 1);
   }, []);
 
   useEffect(() => {
     setMultipliers();
   }, [knownNumber]);
+
+  useEffect(() => {
+    const getGamesHistory = async () => {
+      try {
+        const response = await fetch(moreOrLessUrl);
+        const historyResponse = await response.json();
+        const history = historyResponse.data;
+        console.log('Games history:', history);
+        setGamesHistory(history);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    getGamesHistory();
+  }, []);
+
+  /**
+ * Close modal when wherever is clicked.
+ */
+  useEffect(() => {
+    if (typeof (window) !== 'undefined') {
+      window.addEventListener('click', (e: MouseEvent) => {
+        // Don't close same time as opened (`CustomButton` clicked)
+        if (!(Array.from(e.target.classList).includes('focus-visible:outline-2'))) {
+          setIsHistoryModalOpen(false);
+        }
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -295,8 +353,8 @@ const MoreOrLessPage = () => {
                 <span ref={makeKnownNumberCounter}>1</span>
               </div>
             </div>
-            <div className="w-[68%] mx-auto">
-              <CustomButton type="button" onClick={() => { }} isFullWidth>История игр</CustomButton>
+            <div className="w-3/5 md:w-[68%] mx-auto">
+              <CustomButton type="button" onClick={() => openHistoryModal()} isFullWidth>История игр</CustomButton>
             </div>
             <div className={`wrapper grid grid-rows-5 md:grid-rows-1 md:grid-cols-5 md:space-x-2 space-y-5 md:space-y-0 ${!canSelectOption ? 'pointer-events-none' : 'pointer'}`}>
               <GameSelection onClick={() => startGame("even")} canSelectOption={canSelectOption} text="Чёт" multiplier={1.90} />
@@ -309,6 +367,7 @@ const MoreOrLessPage = () => {
         </div>
         <CashedOutModal isOpen={isCashedOutModalOpen} setIsOpen={setIsCashedOutModalOpen} startGame={resetGame} multiplier={multiplier} payoff={Math.round(stake * multiplier)} isBombPage={false} />
         <LostModal isOpen={isLostModalOpen} setIsOpen={setIsLostModalOpen} startGame={resetGame} multiplier={multiplier} isBombPage={false} />
+        <HistoryModal isOpen={isHistoryModalOpen} setIsOpen={setIsHistoryModalOpen} games={gamesHistory} />
       </section>
     </>
   )

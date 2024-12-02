@@ -3,7 +3,7 @@ import { BananaIcon, BombIcon } from "@/assets/images";
 import CustomButton from "@/lib/layout/components/custom-button";
 import { HistoryModal } from "../components/history-modal";
 import { CashedOutModal } from "../components/cashed-out-modal";
-import type { BombGameProps } from "@/../interfaces";
+import type { BombGameProps, GameHistory } from "@/../interfaces";
 import '@/lib/styles/modal.css';
 
 
@@ -48,7 +48,7 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
   const [gameWasLost, setGameWasLost] = useState<boolean>(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState<boolean>(false);
   const [isCashedOutModalOpen, setIsCashedOutModalOpen] = useState<boolean>(false);
-  const [gamesHistory, setGamesHistory] = useState<any[]>([]);
+  const [gamesHistory, setGamesHistory] = useState<GameHistory[]>([] as GameHistory[]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   //bombsAmount = 23;
@@ -160,14 +160,18 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
   }
 
   const getGamesHistory = async () => {
-    const response = await fetch(bombURL);
-    console.log(response);
-    const historyResponse = await response.json();
-    const history = await historyResponse.data;
-    history.reverse();
+    try {
+      const response = await fetch(bombURL);
+      console.log(response);
+      const historyResponse = await response.json();
+      const history = historyResponse.data;
+      history.reverse();
 
-    console.log('games history', history);
-    setGamesHistory(history);
+      console.log('games history', history);
+      setGamesHistory(history);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   useEffect(() => {
@@ -271,7 +275,7 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
           ${totalGuesses === 0 && !gameWasLost ? 'pointer-events-none brightness-75' : 'pointer'}`}
           disabled={totalGuesses === 0 && !gameWasLost}
         >
-          { isLoading
+          {isLoading
             ? <div class="lds-spinner translate-x-[-0.5rem] translate-y-[-0.375rem] scale-[0.5]"><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /></div>
             : totalGuesses === 0
               ? gameWasLost ? 'Ты проиграл' : 'Найди бананы'

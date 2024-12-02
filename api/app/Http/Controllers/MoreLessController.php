@@ -7,7 +7,7 @@ use Illuminate\Routing\Controller as BaseController;
 use App\Http\ResponseBuilder;
 use App\Repositories\MoreLessRepository;
 
-class MoreLess extends BaseController
+class MoreLessController extends BaseController
 {
     public function __construct(private MoreLessRepository $moreLessRepository) {}
 
@@ -27,12 +27,15 @@ class MoreLess extends BaseController
 
     public function create(Request $req)
     {
-        $bomb = $req->json()->all();
+        $moreLess = $req->json()->all();
         return ResponseBuilder::getResponse(fn () => 
             $this->moreLessRepository->create(
-                $bomb['bombs'],
-                $bomb['multiplier'],
-                $bomb['payoff'],
+                $moreLess['known'],
+                $moreLess['option'],
+                $moreLess['guessed'],
+                $moreLess['stake'],
+                $moreLess['multiplier'],
+                $moreLess['payoff'],
             )
         );
     }
@@ -42,7 +45,10 @@ class MoreLess extends BaseController
         return ResponseBuilder::getResponse(fn () => 
             $this->moreLessRepository->update(
                 $id,
-                $req->input('bombs'),
+                $req->input('known'),
+                $req->input('option'),
+                $req->input('guessed'),
+                $req->input('stake'),
                 $req->input('multiplier'),
                 $req->input('payoff'),
             )

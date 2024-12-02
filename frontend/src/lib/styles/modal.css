@@ -37,3 +37,8 @@
   display: grid;
   grid-template-columns: 0.4fr 1fr 1fr 1fr;
 }
+
+.history-modal-more-less-table-row {
+  display: grid;
+  grid-template-columns: 0.4fr 1fr 1fr 1fr 1fr 1fr 1fr;
+}

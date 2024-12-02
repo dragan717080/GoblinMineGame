@@ -10,5 +10,7 @@ class MoreLess extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $fillable = ['bombs', 'multiplier', 'payoff'];
+    protected $fillable = ['known', 'option', 'guessed', 'stake', 'multiplier', 'payoff'];
+
+    protected $table = 'more_less';
 }

@@ -24,7 +24,10 @@ class MoreLessRepository
 
     public function update(
         string $id,
-        ?int $moreLesss,
+        ?int $known,
+        ?string $option,
+        ?int $guessed,
+        ?int $stake,
         ?float $multiplier,
         ?int $payoff,
     )
@@ -35,12 +38,24 @@ class MoreLessRepository
             return null;
         }
 
-        if ($moreLesss !== null) {
-            $moreLess->bombs = $moreLesss;
+        if ($known !== null) {
+            $moreLess->known = $known;
+        }
+
+        if ($option !== null) {
+            $moreLess->option = $option;
+        }
+
+        if ($guessed !== null) {
+            $moreLess->guessed = $guessed;
+        }
+
+        if ($stake !== null) {
+            $moreLess->stake = $stake;
         }
 
         if ($multiplier !== null) {
-            $moreLess->arrival_time = $multiplier;
+            $moreLess->multiplier = $multiplier;
         }
 
         if ($payoff !== null) {
@@ -53,14 +68,20 @@ class MoreLessRepository
     }
 
     public function create(
-        int $moreLesss,
+        int $known,
+        string $option,
+        int $guessed,
+        int $stake,
         float $multiplier,
         int $payoff,
     )
     {
         $moreLess = new MoreLess();
 
-        $moreLess->bombs = $moreLesss;
+        $moreLess->known = $known;
+        $moreLess->option = $option;
+        $moreLess->guessed = $guessed;
+        $moreLess->stake = $stake;
         $moreLess->multiplier = $multiplier;
         $moreLess->payoff = $payoff;
 

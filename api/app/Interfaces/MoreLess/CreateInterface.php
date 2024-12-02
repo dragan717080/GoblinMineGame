@@ -7,7 +7,10 @@ namespace App\Interfaces\Bomb;
 interface CreateInterface
 {
     public function create(
-        int $bombs,
+        int $known,
+        string $option,
+        int $guessed,
+        int $stake,
         float $multiplier,
         int $payoff,
     );
