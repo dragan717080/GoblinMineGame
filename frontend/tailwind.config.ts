@@ -23,6 +23,7 @@ export default {
       dark: "#3A3D3E",
       transparent: 'transparent',
       current: 'currentColor',
+      orangeb: "#FF7621",
       red: colors.red,
       black: colors.black,
       white: colors.white,

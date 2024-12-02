@@ -9,3 +9,4 @@ export { default as DollarCoinIcon } from './dollar-coin.webp';
 export { default as SteamPunkFrame } from './steampunk-frame.png';
 export { default as Wheel } from './wheel.png';
 export { default as SadPenguin } from './sad-penguin.png';
+export { default as Currency } from './currency.png';
