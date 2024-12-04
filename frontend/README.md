@@ -57,6 +57,6 @@ In the project directory, you can run:
 | `fmt:check`  | Checks if the code is formatted with Prettier.       |
 | `prepare`    | Installs husky git hooks.                            |
 
-# App hosted on Vercel
+## App hosted on Vercel
 
 https://goblin-mine-game-frontend.vercel.app/
