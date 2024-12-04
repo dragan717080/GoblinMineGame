@@ -1,10 +1,12 @@
 export const Footer = () => {
   return (
-    <footer className="wrapper row-h space-x-4">
-      {new Date().getFullYear()} -{' '}
-      <span>
-        &nbsp;Dragan Buric
-      </span>
+    <footer className="wrapper row-h space-x-4 text-white">
+      <div>
+        {new Date().getFullYear()} -{' '}
+        <span>
+          &nbsp;Dragan Buric
+        </span>
+      </div>
       <a href="https://three-portfolio-seven.vercel.app/">
         <svg
           fill="#FF9519"

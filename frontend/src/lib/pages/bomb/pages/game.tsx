@@ -13,11 +13,10 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
    */
   const startGame = (): void => {
     setFlipped(Array(5).fill(null).map(() => Array(5).fill(false)));
-    setBombPositions(Array(bombsAmount).fill(-1));
+    setBombPositions(getBombPositions());
     setTotalGuesses(0);
     setPayoff(stake);
     setGameWasLost(false);
-    console.log('new bombs amount:', bombsAmount);
   }
 
   /**
@@ -25,7 +24,8 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
    */
   const completeGame = async (): Promise<void> => {
     setIsLoading(true);
-    const response = await fetch(bombURL, {
+
+    await fetch(bombURL, {
       method: 'POST',
       body: JSON.stringify({
         bombs: bombsAmount,
@@ -34,9 +34,6 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
       })
     });
 
-    const json = await response.json();
-    const data = json.data;
-    console.log('Data', data);
     setIsLoading(false);
     openCashedOutModal();
   }
@@ -57,7 +54,6 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
   const bombURL = `${import.meta.env.VITE_API_BASE_URL}/bombs`;
 
   const openHistoryModal = () => {
-    console.log('opening modal');
     setIsHistoryModalOpen(true);
   }
 
@@ -65,10 +61,7 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
     setIsCashedOutModalOpen(true);
   }
 
-  console.log('Bomb positions:', bombPositions);
-
   const multipliers = [1.08, 1.23, 1.42, 1.64, 1.92, 2.25, 2.68, 3.21, 3.9, 4.8, 6, 6.9, 7.94, 9.13, 10.51, 12.08, 13.87, 15.95, 18.33, 21.01, 24.02, 27.47, 31.32, 35.62, 40.5, 45.6, 50.81, 56.00, 61.26];
-  console.log('Begin flipped:', flipped);
 
   const wait = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -85,7 +78,6 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
       cardFront.classList.add("pointer-events-none");
     };
 
-    console.log(e.target);
     const newFlipped = [...flipped];
 
     let currentElement = e.target!;
@@ -93,13 +85,11 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
       currentElement = (currentElement as HTMLElement).parentNode! as HTMLDivElement;
     }
 
-    console.log(currentElement);
-
     if (!(Array.from((currentElement as HTMLDivElement).classList).includes('flipped'))) {
       (currentElement as HTMLDivElement).classList.add('flipped');
       // Wait for the animation
       await wait(500);
-      console.log('Animation ended');
+
       for (const cardFront of cardFronts) {
         cardFront.classList.remove("pointer-events-none");
         cardFront.classList.add("pointer");
@@ -109,21 +99,16 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
       return;
     }
 
-    console.log('new flipped:', newFlipped)
     newFlipped[row][col] = true;
 
     // Position that clicked card has among 25 cards
     const cardIndex = row * 5 + col;
-    console.log(cardIndex);
-    console.log(bombPositions.includes(cardIndex));
 
     // Lost game
     if (bombPositions.includes(cardIndex)) {
-      console.log('%cYou lost!', 'color:red');
       setIsLoading(true);
       setGameWasLost(true);
       // If lost on first guess, use first multiplier
-      console.log('Will post multiplier', multipliers[totalGuesses - 1])
       const response = await fetch(bombURL, {
         method: 'POST',
         body: JSON.stringify({
@@ -132,13 +117,17 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
           payoff: 0
         })
       });
-      console.log('response after losing:', response);
-      console.log('setting loading false');
+
       setIsLoading(false);
     } else {
-      // Won game
+      // Current guess was correct, proceed
+      // If completed game, finish
+      if (totalGuesses + 1 + bombsAmount === 25) {
+        completeGame();
+      }
+
       setTotalGuesses((totalGuesses: number) => totalGuesses + 1);
-      setPayoff(stake * multipliers[totalGuesses]);
+      setPayoff(Math.round(stake * multipliers[totalGuesses]));
     }
 
     // Set the new flipped state
@@ -167,12 +156,10 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
   const getGamesHistory = async () => {
     try {
       const response = await fetch(bombURL);
-      console.log(response);
       const historyResponse = await response.json();
       const history = historyResponse.data;
       history.reverse();
 
-      console.log('games history', history);
       setGamesHistory(history);
     } catch (err) {
       console.error(err);
@@ -182,13 +169,12 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
   useEffect(() => {
     // Define the async function to reset bomb positions and fetch game history
     const resetBombPositions = async () => {
-      console.log('Resetting bombs positions');
-      setBombPositions(getBombPositions());
 
       // If the game was lost, get games history
       if (gameWasLost) {
-        console.log('%c Getting games history', 'font-size:2rem');
         await getGamesHistory();
+      } else {
+        setBombPositions(getBombPositions());
       }
     };
 
@@ -293,7 +279,6 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
             {/* Multipliers after */}
             {/* Ensure there is at least 1 element with `Math.max`}*/}
             {Array.from({ length: Math.max(6 - totalGuesses - 1, 1) }, (_, index) => {
-              const multiplierIndex = totalGuesses - 6 + index; // Calculates the correct index (from totalGuesses - 6 to totalGuesses - 1)
               return (
                 <div key={Math.random()} className="py-1.5 px-2 rounded-lg bg-dark opacity-50">
                   {multipliers[totalGuesses + index]}

@@ -1,13 +1,12 @@
 import type { HistoryModalProps } from "@/../interfaces";
 
 const HistoryModal = ({ isOpen, games }: HistoryModalProps) => {
-  console.log('Games:', games);
   return (
     <>
       <div className={`modal ${isOpen ? 'block' : 'hidden'}`}>
         <div className="wrapper mt-[10%]">
         <div className="modal-content max-h-[37rem] overflow-y-scroll h-full bg-coffee rounded-[1.25rem]">
-          <div className="">
+          <div>
             <h3 className="bold text-center text-white mt-6 mb-4 uppercase">
               История
             </h3>

@@ -2,7 +2,6 @@ import type { MoreLessHistoryModalProps } from "@/../interfaces";
 import '@/lib/styles/modal.css';
 
 const HistoryModal = ({ isOpen, games }: MoreLessHistoryModalProps) => {
-  console.log('Games:', games);
   const OPTIONS: { [key: string]: string } = { even: "ЧЁТ", lt: "<", eq: "=", gt: ">", odd: "НЕЧЁТ" };
 
   return (
@@ -10,7 +9,7 @@ const HistoryModal = ({ isOpen, games }: MoreLessHistoryModalProps) => {
       <div className={`modal ${isOpen ? 'block' : 'hidden'}`}>
         <div className="wrapper mt-[10%]">
         <div className="modal-content max-h-[37rem] overflow-y-scroll h-full bg-coffee rounded-[1.25rem]">
-          <div className="">
+          <div>
             <h3 className="bold text-center text-white mt-6 mb-4 uppercase">
               История
             </h3>

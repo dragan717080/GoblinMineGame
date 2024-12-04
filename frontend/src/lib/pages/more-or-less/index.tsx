@@ -38,11 +38,7 @@ const MoreOrLessPage = () => {
     setCanSelectOption(false);
     numberToGuessContainerRef.current!.classList.remove('border-peach');
 
-    console.log('option:', selectedOption);
-
     makeElementCounter(numberToGuess, numberToGuessRef.current!, false, selectedOption);
-
-    console.log('To evaluate game');
   }
 
   const openCashedOutModal = () => {
@@ -50,7 +46,6 @@ const MoreOrLessPage = () => {
   }
 
   const openHistoryModal = () => {
-    console.log('opening history modal')
     setIsHistoryModalOpen(true);
   }
 
@@ -72,6 +67,7 @@ const MoreOrLessPage = () => {
     numberToGuessContainerRef.current!.classList.remove("border-red-500");
     numberToGuessContainerRef.current!.classList.remove("border-limegreen");
     numberToGuessContainerRef.current!.classList.add("border-peach");
+    getGamesHistory();
   }
 
   /**
@@ -114,7 +110,6 @@ const MoreOrLessPage = () => {
         console.error('Unknown option');
     }
 
-    console.log('Won game:', won);
     // Get multiplier for selected option
     const selectedOptionIndex = Object.keys(OPTIONS).indexOf(selectedOption);
     // `slice(1)` since it starts with `x`
@@ -126,14 +121,12 @@ const MoreOrLessPage = () => {
     if (won) {
       numberToGuessContainerRef.current!.classList.add('border-limegreen');
       wheelCenterRef.current!.classList.add('bg-limegreen');
-      console.log('New multiplier:', newMultiplier);
       await wait(700);
       openCashedOutModal();
     } else {
       numberToGuessContainerRef.current!.classList.add('border-red-500');
       wheelCenterRef.current!.classList.add('bg-red-500');
       await wait(700);
-      console.log('opening lost modal')
       setIsLostModalOpen(true);
     }
 
@@ -149,7 +142,6 @@ const MoreOrLessPage = () => {
     wheelRef.current!.classList.add("spin-wheel");
     wheelCenterRef.current!.classList.remove("hidden");
     wheelCenterRef.current!.classList.add("block");
-    console.log('text will be:', OPTIONS[selectedOption]);
     wheelCenterRef.current!.getElementsByTagName("div")[0].innerText = OPTIONS[selectedOption];
   }
 
@@ -158,7 +150,6 @@ const MoreOrLessPage = () => {
    * (e.g. high number will have high odds for `lt` and low for `gt`)
    */
   const setMultipliers = () => {
-    console.log('SETTING MULTIPLIERS');
     const optionSelectionElements = document.getElementsByClassName('selection-multiplier') as unknown as Array<HTMLDivElement>;
     const [ltElement, gtElement] = [optionSelectionElements[1], optionSelectionElements[3]];
     const probLess = (knownNumber - 1) / 99;
@@ -172,9 +163,6 @@ const MoreOrLessPage = () => {
     // Adding `+0.01` to avoid `1.00` odds
     newProb = (1 / probGreater - 0.05) >= 1 ? (1 / probGreater - 0.05) + 0.01 : 1 / probGreater;
     const oddsGreater = newProb.toFixed(2); // With bookie -0.05
-
-    console.log(`Odds for number less than ${knownNumber}: ${oddsLess}`);
-    console.log(`Odds for number greater than ${knownNumber}: ${oddsGreater}`);
 
     ltElement.innerText = `x${oddsLess}`;
     gtElement.innerText = `x${oddsGreater}`;
@@ -215,7 +203,6 @@ const MoreOrLessPage = () => {
         setTimeout(incrementCounter, ms);
       } else {
         // Finished picking number
-        console.log('wheel:', wheelRef.current)
         wheelRef.current!.classList.remove("spin-wheel");
 
         if (isKnown) {
@@ -225,11 +212,8 @@ const MoreOrLessPage = () => {
           // Since `setTimeout` is asynchronous, must be called inside of this function,
           // and after `incrementCounter` loops
           evaluateGame(selectedOption!);
-          console.log('wheel center:', wheelCenterRef.current)
           //wheelCenterRef.current!.classList.remove("block");
           //wheelCenterRef.current!.classList.add("hidden");
-
-
         }
       }
     };
@@ -273,6 +257,19 @@ const MoreOrLessPage = () => {
 
   const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+  const getGamesHistory = async () => {
+    try {
+      const response = await fetch(moreOrLessUrl);
+      const historyResponse = await response.json();
+      const history = historyResponse.data;
+      // Newest
+      history.reverse();
+      setGamesHistory(history);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   useEffect(() => {
     setKnownNumber(Math.floor(Math.random() * (98 - 2 + 1)) + 2);
     setNumberToGuess(Math.floor(Math.random() * 99) + 1);
@@ -283,24 +280,12 @@ const MoreOrLessPage = () => {
   }, [knownNumber]);
 
   useEffect(() => {
-    const getGamesHistory = async () => {
-      try {
-        const response = await fetch(moreOrLessUrl);
-        const historyResponse = await response.json();
-        const history = historyResponse.data;
-        console.log('Games history:', history);
-        setGamesHistory(history);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
     getGamesHistory();
   }, []);
 
   /**
- * Close modal when wherever is clicked.
- */
+   * Close modal when wherever is clicked.
+   */
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const handleClick = (e: MouseEvent<Element, MouseEvent>) => {

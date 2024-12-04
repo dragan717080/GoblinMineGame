@@ -36,7 +36,7 @@ export default defineConfig({
     reactRouter(),
     checker({
       typescript: true,
-      biome: true,
+
     }),
     tsConfigPaths(),
     visualizer({ template: 'sunburst' }) as unknown as PluginOption,
