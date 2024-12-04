@@ -1,5 +1,4 @@
 export const Frame = ({ isSettingGame }: { isSettingGame: boolean }) => {
-  console.log('is setting game:', isSettingGame)
   return (
     <div className="min-h-[12vh] min-w-[40vw] md:min-w-[12vw] row-v">
       <div className="bg-dark rounded-xl">

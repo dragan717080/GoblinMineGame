@@ -4,7 +4,6 @@ import type { CashedOutModalProps } from "@/../interfaces";
 const CashedOutModal = ({ isOpen, setIsOpen, startGame, multiplier, payoff, isBombPage = true }: CashedOutModalProps) => {
   return (
     <div
-      id="myModal"
       className={`
         modal z-20 ${isOpen ? 'block' : 'hidden'}
         ${!isBombPage ? 'absolute w-full bottom-0' : ''}

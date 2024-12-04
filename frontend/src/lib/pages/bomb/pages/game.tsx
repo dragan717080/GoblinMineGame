@@ -209,9 +209,9 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
           setIsHistoryModalOpen(false);
         }
       };
-  
+
       window.addEventListener('click', handleClick);
-  
+
       // Clean up the event listener on component unmount
       return () => {
         // @ts-ignore
@@ -273,13 +273,33 @@ export const Game = ({ setIsSettingGame, stake, bombsAmount }: BombGameProps) =>
 
         {/* Multipliers */}
         {!gameWasLost &&
-          <div className="mt-6 mb-1 mx-6 flex space-x-3">
-            <div className="border-4 py-1.5 px-2 rounded-lg border-red-700">
-              {totalGuesses === 0 ? '1.00' : multipliers[totalGuesses - 1]}
+          <div className={`mt-3 mx-6 flex space-x-1 text-white text-xs md:text-md xl:text-lg ${gameWasLost ? 'opacity-0' : ''}`}>
+            {Array.from({ length: 4 }, (_, index) => {
+              // Since it starts from `1.08`, reduce by 1
+              const multiplierIndex = totalGuesses - 5 + index; // Calculates the correct index (from totalGuesses - 6 to totalGuesses - 1)
+              // Check if the multiplier exists (i.e., the index is within bounds)
+              if (multiplierIndex >= -1 && multiplierIndex < multipliers.length) {
+                return (
+                  <div key={Math.random()} className="py-1.5 px-2 rounded-lg bg-dark">
+                    {multipliers[multiplierIndex] ? multipliers[multiplierIndex].toFixed(2) : '1.00'}
+                  </div>
+                );
+              }
+              return null; // If the multiplier does not exist, return nothing
+            })}
+            <div className="py-1.5 px-2 rounded-lg bg-red-500">
+              {totalGuesses === 0 ? '1.00' : multipliers[totalGuesses - 1].toFixed(2)}
             </div>
-            <div className="border-4 py-1.5 px-2 rounded-lg">{multipliers[totalGuesses]}</div>
-            <div className="border-4 py-1.5 px-2 rounded-lg">{multipliers[totalGuesses + 1]}</div>
-            <div className="border-4 py-1.5 px-2 rounded-lg">{multipliers[totalGuesses + 2]}</div>
+            {/* Multipliers after */}
+            {/* Ensure there is at least 1 element with `Math.max`}*/}
+            {Array.from({ length: Math.max(6 - totalGuesses - 1, 1) }, (_, index) => {
+              const multiplierIndex = totalGuesses - 6 + index; // Calculates the correct index (from totalGuesses - 6 to totalGuesses - 1)
+              return (
+                <div key={Math.random()} className="py-1.5 px-2 rounded-lg bg-dark opacity-50">
+                  {multipliers[totalGuesses + index]}
+                </div>
+              );
+            })}
           </div>}
 
         <button

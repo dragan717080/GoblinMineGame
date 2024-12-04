@@ -5,7 +5,6 @@ const LostModal = ({ isOpen, setIsOpen, startGame, multiplier, isBombPage = fals
   return (
     <>
       <div
-        id="myModal"
         className={`
         modal ${isOpen ? 'block' : 'hidden'}
         ${!isBombPage ? 'absolute w-full bottom-0' : ''}
