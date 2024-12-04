@@ -22,3 +22,7 @@ Full overview of the app is in the `frontend` and `api` folders
 
 [repo-size]: https://img.shields.io/github/repo-size/dragan717080/GoblinMineGame
 [stars]: https://img.shields.io/github/stars/dragan717080/GoblinMineGame
+
+# App hosted on Vercel
+
+https://goblin-mine-game-frontend.vercel.app/
